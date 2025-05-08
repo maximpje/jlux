@@ -12,13 +12,24 @@ import java.util.Scanner;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+    static boolean hadError = false;
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
+        List<Token> tokens = scanner.tokens();
 // For now, just print the tokens.
         for (Token token : tokens) {
             System.out.println(token);
         }
+        if (hadError) System.exit(65);
+    }
+    static void error(int line, String message) {
+        report(line, "", message);
+    }
+    private static void report(int line, String where,
+                               String message) {
+        System.err.println(
+                "[line " + line + "] Error" + where + ": " + message);
+        hadError = true;
     }
     private static void runFile(String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
@@ -32,6 +43,7 @@ public class Main {
             String line = reader.readLine();
             if (line == null) break;
             run(line);
+            hadError = false;
         }
     }
     public static void main(String[] args) throws IOException{
