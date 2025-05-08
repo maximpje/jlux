@@ -1,5 +1,7 @@
 package io.github.maximpje;
 
+// every LOX token is mapped to an enum
+
 public enum TokenType {
     // One character tokens.
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
