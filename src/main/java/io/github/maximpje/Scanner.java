@@ -40,6 +40,8 @@ public class Scanner {
     private void scanToken() {
         char c = advance();
         switch (c) {
+
+            // single char tokens
             case '(': addToken(LEFT_PAREN); break;
             case ')': addToken(RIGHT_PAREN); break;
             case '{': addToken(LEFT_BRACE); break;
@@ -51,6 +53,20 @@ public class Scanner {
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break;
 
+            //
+            case '!':
+                addToken(match('=') ? BANG_EQUAL : BANG);
+                break;
+            case '=':
+                addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+                break;
+            case '<':
+                addToken(match('=') ? LESS_EQUAL : LESS);
+                break;
+            case '>':
+                addToken(match('=') ? GREATER_EQUAL : GREATER);
+                break;
+
             default:
                 Main.error(line, "Unexpected character.");
                 break;
@@ -59,6 +75,13 @@ public class Scanner {
 
 
     // helper methods
+
+    private boolean match(char expected) { // returns true if next char is =, useful for tokens where the sign changes the token
+        if (isAtEnd()) return false;
+        if (source.charAt(current) != expected) return false;
+        current++;
+        return true;
+    }
 
     private boolean isAtEnd() {
         return current >= source.length(); // returns a true boolean value if the code is at the end
