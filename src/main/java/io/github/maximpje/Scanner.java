@@ -67,6 +67,27 @@ public class Scanner {
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
 
+            // SLASH is special need as comments start with a slash too
+            case '/':
+                if (match('/')) {
+                    while (peek() != '\n' && !isAtEnd()) advance(); // ignores comment
+                } else {
+                    addToken(SLASH);
+                }
+                break;
+
+
+            // ignore the weird kids
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n':
+                line++;
+                break;
+
+            case '"': string(); break; // calls method to extract the string and turn it into a token
+
             default:
                 Main.error(line, "Unexpected character.");
                 break;
@@ -75,6 +96,32 @@ public class Scanner {
 
 
     // helper methods
+
+    private void string(){
+        // loops through the string until '='
+        while(peek() != '=' && !isAtEnd()) {
+            if(peek() == '\n') line++;
+        }
+
+        // throw an error if it does not find a '='
+        if(isAtEnd()){
+            Main.error(line, "Unterminated string. ");
+        }
+
+        advance();
+
+        //trim quotes
+        String value = source.substring(start + 1, current - 1);
+        addToken(STRING, value);
+
+    }
+
+
+
+    private char peek() { // the short bus
+        if (isAtEnd()) return '\0';
+        return source.charAt(current);
+    }
 
     private boolean match(char expected) { // returns true if next char is =, useful for tokens where the sign changes the token
         if (isAtEnd()) return false;
