@@ -21,9 +21,8 @@ public class Scanner {
         this.source = source; // stores source code in local variable
     }
 
-    private boolean isAtEnd() {
-        return current >= source.length(); // returns a true boolean value if the code is at the end
-    }
+
+
 
     List<Token> scanTokens() {
         while (!isAtEnd()) { // loop through the source code and extract all tokens
@@ -51,7 +50,30 @@ public class Scanner {
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break;
+
+            default:
+                Main.error(line, "Unexpected character.");
+                break;
         }
+    }
+
+
+    // helper methods
+
+    private boolean isAtEnd() {
+        return current >= source.length(); // returns a true boolean value if the code is at the end
+    }
+
+    private char advance() { // returns the next character
+        current++;
+        return source.charAt(current - 1);
+    }
+    private void addToken(TokenType type) { // small wrapper for Token
+        addToken(type, null);
+    }
+    private void addToken(TokenType type, Object literal) {
+        String text = source.substring(start, current);
+        tokens.add(new Token(type, text, literal, line));
     }
 
 }
