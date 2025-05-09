@@ -9,6 +9,29 @@ import static io.github.maximpje.TokenType.*;
 
 public class Scanner {
 
+    private static final Map<String, TokenType> keywords;
+
+    // hashmap of reserved keywords
+    static {
+        keywords = new HashMap<>();
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("true", TRUE);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
+    }
+
     private final String source; // stores source code as a String
     private final List<Token> tokens = new ArrayList<>(); // ArrayList to dump all the tokens
 
@@ -91,8 +114,10 @@ public class Scanner {
             default:
                 if (isDigit(c)) {
                     number();
+                } else if (isAlpha(c)) {
+                    identifier();
                 } else {
-                    Lox.error(line, "Unexpected character.");
+                    Main.error(line, "Unexpected character.");
                 }
                 break;
         }
@@ -101,13 +126,23 @@ public class Scanner {
 
     // helper methods
 
+    private void identifier() {
+        while (isAlphaNumeric(peek())) advance(); // looks if next number is alphanumeric if it is advance
+        addToken(IDENTIFIER);
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) type = IDENTIFIER;
+        addToken(type);
+    }
+
     private void number() {
         while (isDigit(peek())) advance();
         // Look for a fractional part.
         if (peek() == '.' && isDigit(peekNext())) {
             // Consume the "."
-            advance();
-            while (isDigit(peek())) advance();
+            do advance();
+            while (isDigit(peek()));
         }
         addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
     }
@@ -146,6 +181,18 @@ public class Scanner {
     private char peekNext() { // peeks 2 characters ahead
         if (current + 1 >= source.length()) return '\0';
         return source.charAt(current + 1);
+    }
+
+    // returns true if character is either a letter or an underscore
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                c == '_';
+    }
+
+    // returns true if character is either a letter, number or an underscore
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
     }
 
     private boolean match(char expected) { // returns true if next char is =, useful for tokens where the sign changes the token
