@@ -89,13 +89,33 @@ public class Scanner {
             case '"': string(); break; // calls method to extract the string and turn it into a token
 
             default:
-                Main.error(line, "Unexpected character.");
+                if (isDigit(c)) {
+                    number();
+                } else {
+                    Lox.error(line, "Unexpected character.");
+                }
                 break;
         }
     }
 
 
     // helper methods
+
+    private void number() {
+        while (isDigit(peek())) advance();
+        // Look for a fractional part.
+        if (peek() == '.' && isDigit(peekNext())) {
+            // Consume the "."
+            advance();
+            while (isDigit(peek())) advance();
+        }
+        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+    }
+
+    // return true if char is a digit.
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
 
     private void string(){
         // loops through the string until '='
@@ -118,9 +138,14 @@ public class Scanner {
 
 
 
-    private char peek() { // the short bus
+    private char peek() { // peeks next character
         if (isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    private char peekNext() { // peeks 2 characters ahead
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
     }
 
     private boolean match(char expected) { // returns true if next char is =, useful for tokens where the sign changes the token
