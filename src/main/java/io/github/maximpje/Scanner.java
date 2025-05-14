@@ -171,8 +171,6 @@ public class Scanner {
 
     }
 
-
-
     private char peek() { // peeks next character
         if (isAtEnd()) return '\0';
         return source.charAt(current);
@@ -214,6 +212,7 @@ public class Scanner {
         addToken(type, null);
     }
     private void addToken(TokenType type, Object literal) {
+        System.out.println("added token: " + type);
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
     }
