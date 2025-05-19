@@ -2,6 +2,7 @@ package tool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,11 +33,11 @@ public class GenerateAst {
         writer.println(" }");
     }
     private static void defineAst(
-            String outputDir, String baseName, List<String> types)
+            String outputDir, String baseName, List<String> types) // Fields
             throws IOException {
         String path = outputDir + "/" + baseName + ".java";
-        PrintWriter writer = new PrintWriter(path, "UTF-8");
-        writer.println("package com.io.github.maximpje;");
+        PrintWriter writer = new PrintWriter(path, StandardCharsets.UTF_8);
+        writer.println("package io.github.maximpje;");
         writer.println();
         writer.println("import java.util.List;");
         writer.println();
@@ -50,11 +51,12 @@ public class GenerateAst {
         writer.close();
     }
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.err.println("Usage: generate_ast <output directory>");
-            System.exit(64);
-        }
-        String outputDir = args[0];
+//        if (args.length != 1) {
+//            System.err.println("Usage: generate_ast <output directory>");
+//            System.exit(64);
+//        }
+        //String outputDir = args[0];
+        String outputDir = "src/main/java/io/github/maximpje";
         defineAst(outputDir, "Expr", Arrays.asList(
                 "Binary : Expr left, Token operator, Expr right",
                 "Grouping : Expr expression",
