@@ -1,1 +1,1 @@
-LUX interpretter following the book "crafting interpretters"
+You don't have to read me
